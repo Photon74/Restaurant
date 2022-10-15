@@ -51,5 +51,30 @@ namespace Restaurant.Booking
                 : $"УВЕДОМЛЕНИЕ: Готово! Ваш столик номер {table.Id}");
             });
         }
+
+        public void UnBookTableAsync(int tableId)
+        {
+            Task.Run(async () =>
+            {
+                var table = _tables.FirstOrDefault(t => t.Id == tableId && t.State == State.Booked);
+                await Task.Delay(delay);
+                table?.SetState(State.Free);
+
+                Console.WriteLine(table is null
+                    ? $"Столик под номером {tableId} не занят!"
+                    : $"Снята бронь со столика номер {tableId}.");
+            });
+        }
+
+        public void UnBookTable(int tableId)
+        {
+                var table = _tables.FirstOrDefault(t => t.Id == tableId && t.State == State.Booked);
+                Thread.Sleep(delay);
+                table?.SetState(State.Free);
+
+                Console.WriteLine(table is null
+                    ? $"Столик под номером {tableId} не занят!"
+                    : $"Снята бронь со столика номер {tableId}.");
+        }
     }
 }
