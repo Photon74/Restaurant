@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Restaurant.Booking
+﻿namespace Restaurant.Booking
 {
     internal class Table
     {
@@ -14,7 +8,7 @@ namespace Restaurant.Booking
 
         public int SeatsCount { get; }
 
-        
+
         public Table(int id)
         {
             Id = id;
@@ -30,6 +24,6 @@ namespace Restaurant.Booking
             return true;
         }
 
-        private readonly Random random = new ();
+        private readonly Random random = new();
     }
 }

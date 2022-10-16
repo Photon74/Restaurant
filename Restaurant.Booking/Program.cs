@@ -1,4 +1,6 @@
-﻿using System.Diagnostics;
+﻿using Restaurant.Notification;
+using System.Diagnostics;
+using System.Threading;
 
 namespace Restaurant.Booking
 {
@@ -7,6 +9,8 @@ namespace Restaurant.Booking
         static void Main(string[] args)
         {
             var restaurant = new Restaurant();
+            var tm = new TimerCallback(restaurant.AutoUnbookTables);
+            var timer = new Timer(tm, 0, 0, 20000);
             while (true)
             {
                 Console.WriteLine("Привет! Желаете забронировать столик?\n1 - мы уведомим Вас по смс (асинхронно)" +
@@ -22,7 +26,7 @@ namespace Restaurant.Booking
                 stopWatch.Start();
 
                 if (choice == 1)
-                    restaurant.BookFreeTableAsync(1);
+                    restaurant.BookFreeTableAsync(1); 
                 else
                     restaurant.BookFreeTable(1);
                 Console.WriteLine("Спасибо за Ваше обращение!");

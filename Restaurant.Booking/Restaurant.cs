@@ -10,7 +10,7 @@ namespace Restaurant.Booking
 
         public Restaurant()
         {
-            for (int i = 0; i < 10; i++)
+            for (int i = 1; i < 10; i++)
             {
                 _tables.Add(new Table(i));
             }
@@ -38,8 +38,8 @@ namespace Restaurant.Booking
             Task.Run(async () =>
             {
                 var table = _tables.FirstOrDefault(t =>
-                                                    t.SeatsCount >= countOfPersons
-                                                    && t.State == State.Free);
+                                       t.SeatsCount >= countOfPersons
+                                       && t.State == State.Free);
                 await Task.Delay(delay);
                 table?.SetState(State.Booked);
 
@@ -72,6 +72,23 @@ namespace Restaurant.Booking
             _notifier.SendAsync(table is null
                 ? $"Столик под номером {tableId} не занят!"
                 : $"Снята бронь со столика номер {tableId}.");
+        }
+
+        public void AutoUnbookTables(object obj)
+        {
+            Task.Run(() =>
+            {
+                var tables = _tables.Where(t => t.State == State.Booked);
+                if (!tables.Any()) _notifier.SendAsync("Все столики свободны!");
+                foreach (var table in tables)
+                {
+                    if (table != null)
+                    {
+                        table.SetState(State.Free);
+                        _notifier.SendAsync($"Снята бронь со столика {table.Id}");
+                    }
+                }
+            });
         }
     }
 }

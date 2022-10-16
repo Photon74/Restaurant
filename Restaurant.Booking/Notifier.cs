@@ -13,7 +13,7 @@ namespace Restaurant.Notification
 
             Task.Run(async () => 
             {
-                await Task.Delay(10000);
+                await Task.Delay(5000);
                 Console.WriteLine(message);
             });
         }
