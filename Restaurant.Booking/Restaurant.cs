@@ -40,7 +40,6 @@ namespace Restaurant.Booking
                 var table = _tables.FirstOrDefault(t =>
                                        t.SeatsCount >= countOfPersons
                                        && t.State == State.Free);
-                await Task.Delay(delay);
                 table?.SetState(State.Booked);
 
                 _notifier.SendAsync(table is null
@@ -51,11 +50,16 @@ namespace Restaurant.Booking
 
         public void UnBookTableAsync(int tableId)
         {
+            Table? table;
             Task.Run(async () =>
             {
-                var table = _tables.FirstOrDefault(t => t.Id == tableId && t.State == State.Booked);
-                await Task.Delay(delay);
-                table?.SetState(State.Free);
+                lock (_tables)
+                {
+                    table = _tables.FirstOrDefault(t => t.Id == tableId && t.State == State.Booked);
+                    table?.SetState(State.Free); 
+                }
+
+                //await Task.Delay(delay);
 
                 _notifier.SendAsync(table is null
                     ? $"Столик под номером {tableId} не занят!"
