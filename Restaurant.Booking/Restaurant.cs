@@ -1,10 +1,12 @@
 ﻿using Restaurant.Notification;
+using Messaging;
 
 namespace Restaurant.Booking
 {
     internal class Restaurant
     {
         private readonly Notifier _notifier = new();
+        private readonly Produser _produser = new ("BookingNotification", "localhost");
         private readonly List<Table> _tables = new();
         private readonly int delay = 5000;
 
@@ -33,16 +35,20 @@ namespace Restaurant.Booking
 
         public void BookFreeTableAsync(int countOfPersons)
         {
-            _notifier.SendAsync("Добрый день! Подождите секунду, я подберу столик и подтвержу вашу бронь, Вам придет уведомление.");
+            _notifier.SendAsync("Подождите секунду, я подберу столик и подтвержу вашу бронь, Вам придет уведомление.");
 
             Task.Run(async () =>
             {
-                var table = _tables.FirstOrDefault(t =>
-                                       t.SeatsCount >= countOfPersons
-                                       && t.State == State.Free);
-                table?.SetState(State.Booked);
+                Table? table;
+                lock (_tables)
+                {
+                    table = _tables.FirstOrDefault(t =>
+                                                   t.SeatsCount >= countOfPersons
+                                                   && t.State == State.Free);
+                    table?.SetState(State.Booked);
+                }
 
-                _notifier.SendAsync(table is null
+                _produser.Send(table is null
                 ? "УВЕДОМЛЕНИЕ: К сожалению все столики заняты."
                 : $"УВЕДОМЛЕНИЕ: Готово! Ваш столик номер {table.Id}");
             });

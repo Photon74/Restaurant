@@ -3,7 +3,7 @@ using RabbitMQ.Client.Events;
 
 namespace Messaging
 {
-    internal class Consumer : IDisposable
+    public class Consumer : IDisposable
     {
         private readonly string _queueName;
         private readonly string _hostName;

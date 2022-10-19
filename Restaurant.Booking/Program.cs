@@ -1,34 +1,25 @@
-﻿using Restaurant.Notification;
-using System.Diagnostics;
-using System.Threading;
+﻿using System.Diagnostics;
 
 namespace Restaurant.Booking
 {
     internal class Program
     {
-        static void Main(string[] args)
+        static async Task Main(string[] args)
         {
             var restaurant = new Restaurant();
-            var tm = new TimerCallback(restaurant.AutoUnbookTables);
-            var timer = new Timer(tm, 0, 0, 20000);
+            var timerCallback = new TimerCallback(restaurant.AutoUnbookTables);
+            var timer = new Timer(timerCallback, 0, 0, 20000);
+
             while (true)
             {
-                Console.WriteLine("Привет! Желаете забронировать столик?\n1 - мы уведомим Вас по смс (асинхронно)" +
-                    "\n2 - подождите на линии, мы Вас оповестим (синхронно)");
+                await Task.Delay(2000);
 
-                if (!int.TryParse(Console.ReadLine(), out var choice) || choice is not (1 or 2))
-                {
-                    Console.WriteLine("Введите, пожалуйста 1 или 2");
-                    continue;
-                }
+                Console.WriteLine("Привет! Желаете забронировать столик?");
 
                 var stopWatch = new Stopwatch();
                 stopWatch.Start();
 
-                if (choice == 1)
-                    restaurant.BookFreeTableAsync(1); 
-                else
-                    restaurant.BookFreeTable(1);
+                restaurant.BookFreeTableAsync(1);
                 Console.WriteLine("Спасибо за Ваше обращение!");
 
                 stopWatch.Stop();

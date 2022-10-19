@@ -3,7 +3,7 @@ using System.Text;
 
 namespace Messaging
 {
-    internal class Produser
+    public class Produser
     {
         private readonly string _queueName;
         private readonly string _hostName;
