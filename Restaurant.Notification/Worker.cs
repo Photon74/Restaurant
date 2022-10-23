@@ -1,4 +1,4 @@
-﻿using Messaging;
+﻿using Restaurant.Messaging;
 using Microsoft.Extensions.Hosting;
 using System.Text;
 

@@ -1,5 +1,5 @@
 ﻿using Restaurant.Notification;
-using Messaging;
+using Restaurant.Messaging;
 
 namespace Restaurant.Booking
 {

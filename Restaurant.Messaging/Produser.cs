@@ -1,7 +1,7 @@
 ﻿using RabbitMQ.Client;
 using System.Text;
 
-namespace Messaging
+namespace Restaurant.Messaging
 {
     public class Produser
     {
