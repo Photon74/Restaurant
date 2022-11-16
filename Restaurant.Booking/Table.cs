@@ -18,12 +18,16 @@
 
         public bool SetState(State state)
         {
-            if (state == State) return false;
+            lock (_lock)
+            {
+                if (state == State) return false;
 
-            State = state;
-            return true;
+                State = state;
+                return true; 
+            }
         }
 
         private readonly Random random = new();
+        private readonly object _lock = new ();
     }
 }
