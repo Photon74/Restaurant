@@ -1,7 +1,7 @@
 ﻿using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 
-namespace Messaging
+namespace Restaurant.Messaging
 {
     public class Consumer : IDisposable
     {

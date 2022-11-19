@@ -1,4 +1,9 @@
-﻿using System.Diagnostics;
+﻿using System;
+using MassTransit;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Restaurant.Booking.Notifier;
+//using Restaurant.Notification.Consumers;
 
 namespace Restaurant.Booking
 {
@@ -6,26 +11,24 @@ namespace Restaurant.Booking
     {
         static async Task Main(string[] args)
         {
-            var restaurant = new Restaurant();
-            var timerCallback = new TimerCallback(restaurant.AutoUnbookTables);
-            var timer = new Timer(timerCallback, 0, 0, 20000);
-
-            while (true)
-            {
-                await Task.Delay(2000);
-
-                Console.WriteLine("Привет! Желаете забронировать столик?");
-
-                var stopWatch = new Stopwatch();
-                stopWatch.Start();
-
-                restaurant.BookFreeTableAsync(1);
-                Console.WriteLine("Спасибо за Ваше обращение!");
-
-                stopWatch.Stop();
-                var time = stopWatch.Elapsed;
-                Console.WriteLine($"Время обработки заказа - {time.Seconds:00}:{time.Milliseconds:00}");
-            }
+            //var builder = WebApplication.CreateBuilder(args);
+            CreateHostBuilder(args).Build().Run();
         }
+
+        private static IHostBuilder CreateHostBuilder(string[] args) =>
+            Host.CreateDefaultBuilder(args)
+            .ConfigureServices(services =>
+            {
+                services.AddMassTransit(configure =>
+                {
+                    configure.UsingRabbitMq((context, conf) =>
+                    {
+                        conf.ConfigureEndpoints(context);
+                    });
+                });
+                services.AddTransient<Restaurant>();
+                services.AddHostedService<Worker>();
+                services.AddScoped<INotifier, Notifier.Notifier>();
+            });
     }
 }
