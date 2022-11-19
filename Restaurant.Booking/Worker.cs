@@ -5,6 +5,9 @@ using Restaurant.Messaging;
 
 namespace Restaurant.Booking
 {
+    /// <summary>
+    /// Сервис бронирования столика
+    /// </summary>
     internal class Worker : BackgroundService
     {
         private readonly IBus _bus;
@@ -18,17 +21,17 @@ namespace Restaurant.Booking
             _notifier = notifier;
         }
 
-        protected override async Task ExecuteAsync(CancellationToken stoppingToken)
+        protected override async Task ExecuteAsync(CancellationToken cancellationToken)
         {
-            while (!stoppingToken.IsCancellationRequested)
+            while (!cancellationToken.IsCancellationRequested)
             {
-                await Task.Delay(10000, stoppingToken);
-                await _notifier.SendMessageAsync("Здравствуйте! Желаете забронировать столик?", stoppingToken);
+                await Task.Delay(10000, cancellationToken);
+                await _notifier.SendMessageAsync("Здравствуйте! Желаете забронировать столик?", cancellationToken);
 
-                var result = await _restaurant.BookFreeTableAsync(1, stoppingToken);
+                var result = await _restaurant.BookFreeTableAsync(1, cancellationToken);
 
                 await _bus.Publish(new TableBooked(NewId.NextGuid(), NewId.NextGuid(), result ?? false),
-                    context => context.Durable = false, stoppingToken);
+                    context => context.Durable = false, cancellationToken);
             }
         }
     }

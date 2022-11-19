@@ -18,6 +18,12 @@ namespace Restaurant.Booking
             }
         }
 
+        /// <summary>
+        /// Попытка брони столика (Async)
+        /// </summary>
+        /// <param name="countOfPersons">Кол-во гостей</param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
         public async Task<bool?> BookFreeTableAsync(int countOfPersons, CancellationToken cancellationToken)
         {
             await _notifier.SendMessageAsync("Подождите секунду, я подберу столик и подтвержу вашу бронь, Вам придет уведомление.", cancellationToken);
@@ -26,11 +32,15 @@ namespace Restaurant.Booking
                                       t.SeatsCount >= countOfPersons
                                       && t.State == State.Free);
 
-            await Task.Delay(delay, cancellationToken);
-
             return table?.SetState(State.Booked);
         }
 
+        /// <summary>
+        /// Снятие брони столика по его Id
+        /// </summary>
+        /// <param name="tableId">Id столика</param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
         public async Task<bool?> UnBookTableAsync(int tableId, CancellationToken cancellationToken)
         {
             var table = _tables.FirstOrDefault(t => t.Id == tableId && t.State == State.Booked);
@@ -42,6 +52,11 @@ namespace Restaurant.Booking
             return table?.SetState(State.Free);
         }
 
+        /// <summary>
+        /// Автоматическое снятие брони столика
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <param name="cancellationToken"></param>
         public void AutoUnbookTables(object obj, CancellationToken cancellationToken)
         {
             Task.Run(() =>

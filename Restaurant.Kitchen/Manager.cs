@@ -14,6 +14,7 @@ namespace Restaurant.Kitchen
 
         public void CheckKitchenReady(Guid orderId, Dish? dish)
         {
+
             _bus.Publish<IKitchenReady>(new KitchenReady(orderId, true));
         }
     }
